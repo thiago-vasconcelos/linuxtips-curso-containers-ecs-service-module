@@ -3,7 +3,7 @@ variable "region" {}
 variable "service_name" {}
 
 variable "container_image" {
-  type = string
+  type        = string
   description = "Imagem com tag para deployment da aplicação no ECS"
 }
 
@@ -26,12 +26,12 @@ variable "service_task_execution_role" {}
 variable "service_launch_type" {
   type = list(object({
     capacity_provider = string
-    weight = number
+    weight            = number
   }))
-  default = [ {
+  default = [{
     capacity_provider = "SPOT"
-    weight = 100
-  } ]
+    weight            = 100
+  }]
 }
 
 variable "service_task_count" {}
@@ -132,4 +132,15 @@ variable "alb_arn" {
 
 variable "scale_tracking_requests" {
   default = 0
+}
+
+variable "efs_volumes" {
+  type = list(object({
+    volume_name : string
+    file_system_id : string
+    file_system_root : string
+    mount_point : string
+    read_only : bool
+  }))
+  default = []
 }

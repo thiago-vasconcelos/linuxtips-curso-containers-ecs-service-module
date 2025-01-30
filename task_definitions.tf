@@ -12,6 +12,19 @@ resource "aws_ecs_task_definition" "main" {
 
   task_role_arn = var.service_task_execution_role
 
+  dynamic "volume" {
+    for_each = var.efs_volumes
+    content {
+      name = volume.value.volume_name
+
+      efs_volume_configuration {
+        file_system_id     = volume.value.file_system_id
+        root_directory     = volume.value.file_system_root
+        transit_encryption = "ENABLED"
+      }
+    }
+  }
+
   container_definitions = jsonencode([{
     name   = var.service_name
     image  = var.container_image
@@ -36,6 +49,14 @@ resource "aws_ecs_task_definition" "main" {
       }
     }
 
-    environment_variables = var.environment_variables
+    mountPoints = [
+      for volume in var.efs_volumes : {
+        sourceVolume  = volume.volume_name
+        containerPath = volume.mount_point
+        readOnly      = volume.read_only
+      }
+    ]
+
+    environment = var.environment_variables
   }])
 }
