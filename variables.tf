@@ -44,8 +44,8 @@ variable "service_healthcheck" {
 
 variable "environment_variables" {
   type = list(object({
-    name  = string
-    value = string
+    name : string
+    value : string
   }))
 }
 
