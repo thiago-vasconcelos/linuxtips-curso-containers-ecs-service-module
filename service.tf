@@ -19,7 +19,7 @@ resource "aws_ecs_service" "main" {
 
     content {
       capacity_provider = capacity_provider_strategy.value.capacity_provider
-      weight = capacity_provider_strategy.value.weight
+      weight            = capacity_provider_strategy.value.weight
     }
   }
 

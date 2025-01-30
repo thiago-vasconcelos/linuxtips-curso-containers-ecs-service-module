@@ -43,7 +43,18 @@ variable "service_healthcheck" {
 }
 
 variable "environment_variables" {
-  type = list(any)
+  type = list(object({
+    name  = string
+    value = string
+  }))
+}
+
+variable "secrets" {
+  type = list(object({
+    name : string
+    valueFrom : string
+  }))
+  default = []
 }
 
 variable "capabilities" {
