@@ -47,6 +47,7 @@ variable "environment_variables" {
     name : string
     value : string
   }))
+  default = []
 }
 
 variable "secrets" {
@@ -58,7 +59,8 @@ variable "secrets" {
 }
 
 variable "capabilities" {
-  type = list(any)
+  type    = list(any)
+  default = []
 }
 
 variable "scale_type" {
@@ -154,4 +156,9 @@ variable "efs_volumes" {
     read_only : bool
   }))
   default = []
+}
+
+variable "service_discovery_namespace" {
+  description = "Namespace id do Service Discovery"
+  default     = null
 }
