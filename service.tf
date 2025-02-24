@@ -8,7 +8,6 @@ resource "aws_ecs_service" "main" {
 
   dynamic "service_registries" {
     for_each = var.service_discovery_namespace != null ? [var.service_name] : []
-
     content {
       registry_arn   = aws_service_discovery_service.main[0].arn
       container_name = service_registries.value
@@ -30,6 +29,26 @@ resource "aws_ecs_service" "main" {
       capacity_provider = capacity_provider_strategy.value.capacity_provider
       weight            = capacity_provider_strategy.value.weight
     }
+  }
+
+  dynamic "service_connect_configuration" {
+    for_each = var.use_service_connect ? [var.service_connect_name] : []
+
+    content {
+      enabled   = var.use_service_connect
+      namespace = var.service_connect_name
+
+      service {
+        port_name      = var.service_name
+        discovery_name = var.service_name
+
+        client_alias {
+          port     = var.service_port
+          dns_name = format("%s.%s", var.service_name, var.service_connect_name)
+        }
+      }
+    }
+
   }
 
   dynamic "ordered_placement_strategy" {
