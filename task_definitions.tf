@@ -25,43 +25,45 @@ resource "aws_ecs_task_definition" "main" {
     }
   }
 
-  container_definitions = jsonencode([{
-    name   = var.service_name
-    image  = var.container_image
-    cpu    = var.service_cpu
-    memory = var.service_memory
+  container_definitions = jsonencode([
+    {
+      name   = var.service_name
+      image  = var.container_image
+      cpu    = var.service_cpu
+      memory = var.service_memory
 
-    essential = true
+      essential = true
 
-    portMappings = [
-      {
-        name          = var.service_name
-        containerPort = var.service_port
-        hostPort      = var.service_port
-        protocol      = var.protocol
-        appProtocol   = var.service_protocol
+      portMappings = [
+        {
+          name          = var.service_name
+          containerPort = var.service_port
+          hostPort      = var.service_port
+          protocol      = var.protocol
+          appProtocol   = var.service_protocol
+        }
+      ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.main.id
+          awslogs-region        = var.region
+          awslogs-stream-prefix = var.service_name
+        }
       }
-    ]
 
-    log_configuration = {
-      logDriver = "awslogs"
-      options = {
-        awslogs-group     = aws_cloudwatch_log_group.main.id
-        awslog-region     = var.region
-        aws-stream-prefix = var.service_name
-      }
+      mountPoints = [
+        for volume in var.efs_volumes : {
+          sourceVolume  = volume.volume_name
+          containerPath = volume.mount_point
+          readOnly      = volume.read_only
+        }
+      ]
+
+      environment = var.environment_variables
+
+      secrets = var.secrets
     }
-
-    mountPoints = [
-      for volume in var.efs_volumes : {
-        sourceVolume  = volume.volume_name
-        containerPath = volume.mount_point
-        readOnly      = volume.read_only
-      }
-    ]
-
-    environment = var.environment_variables
-
-    secrets = var.secrets
-  }])
+  ])
 }
