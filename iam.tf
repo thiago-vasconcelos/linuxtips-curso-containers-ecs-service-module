@@ -1,5 +1,6 @@
 resource "aws_iam_role" "service_execution_role" {
   name = format("%s-%s-service-role", var.cluster_name, var.service_name)
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -13,6 +14,7 @@ resource "aws_iam_role" "service_execution_role" {
       },
     ]
   })
+
 }
 
 resource "aws_iam_role_policy" "service_execution_role" {

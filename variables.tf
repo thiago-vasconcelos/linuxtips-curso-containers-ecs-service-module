@@ -15,15 +15,51 @@ variable "private_subnets" {}
 
 variable "service_port" {}
 
+variable "use_lb" {
+  type        = bool
+  default     = true
+  description = "Habilita a exposição do serviço via Load Balancer"
+}
+
+variable "service_protocol" {
+  type    = string
+  default = null
+}
+
+variable "protocol" {
+  type    = string
+  default = "tcp"
+}
+
+variable "service_connect_name" {
+  type    = string
+  default = null
+}
+
+variable "use_service_connect" {
+  type    = bool
+  default = false
+}
+
+variable "service_connect_arn" {
+  type    = string
+  default = null
+}
+
 variable "service_cpu" {}
 
 variable "service_memory" {}
 
 variable "service_listener" {
-  default = null
+  default     = null
+  type        = string
+  description = "ARD do listener do Application Load Balancer que será utilizado pelo serviço"
 }
 
-variable "service_task_execution_role" {}
+variable "service_task_execution_role" {
+  type        = string
+  description = "ARN da role de execução de tarefas do ECS que o ser que será utiliz"
+}
 
 variable "service_launch_type" {
   type = list(object({
